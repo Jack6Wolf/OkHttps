@@ -1,0 +1,13 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.squareup.okio:okio:1.15.0'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly 'org.codehaus.mojo:animal-sniffer-annotations:1.17'
+    compileOnly 'org.conscrypt:conscrypt-openjdk-uber:2.5.0'
+    compileOnly 'org.robolectric:android-all:10-robolectric-5803371'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

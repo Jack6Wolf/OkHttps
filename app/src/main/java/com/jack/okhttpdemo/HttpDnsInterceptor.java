@@ -59,13 +59,13 @@ class HttpDnsInterceptor implements Interceptor {
         } catch (IOException e) {
             //域名解析失败
             if (isNetConnected(context)) {
-                Request.Builder builder = new Request.Builder();
-                Request request = builder.url("https://27.221.54.228/mock/test/jack")
+                Request originRequest = chain.request();
+                Request.Builder builder = originRequest.newBuilder();
+                Request newRequest = builder.url("https://27.221.54.228/mock/test/jack")
                         //必须携带该请求头
                         .header("host", "getman.cn")
-                        .get()//默认就是GET请求，可以不写
                         .build();
-                return chain.proceed(request);
+                return chain.proceed(newRequest);
             } else {
                 throw e;
             }

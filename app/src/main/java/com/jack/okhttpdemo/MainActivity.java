@@ -8,6 +8,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -57,11 +60,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Stetho.initializeWithDefaults(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         builder.eventListenerFactory(MyOkHttpEventListener.FACTORY);
         builder.addInterceptor(new HttpDnsInterceptor(this));
         setSsl();
+        builder.networkInterceptors().add(new StethoInterceptor());
         okHttpClient = builder.build();
     }
 

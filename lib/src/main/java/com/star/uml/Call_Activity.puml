@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+partition Create/Request {
+    :OkHttpClient.Builder.build();
+    :OkHttpClient;
+    :Request.Builder.build();
+    :Request;
+    :OkHttpClient.newCall();
+    :RealCall;
+}
+partition Execute {
+    if (isSync) then (yes)
+      :RealCall.execute();
+      :Dispatcher(runningSyncCalls);
+    else (no)
+      :RealCall.enqueue(AsyncCall);
+      :Dispatcher(readyAsyncCalls);
+      :Dispatcher.promoteAndExecute();
+      :AsyncCall.executeOn();
+      :ExecutorService.execute(AsyncCall);
+    endif
+    :getResponseWithInterceptorChain();
+}
+partition Interceptor/Chain {
+    :RealInterceptorChain.proceed(Request);
+    :OkHttpClient.interceptors;
+    :RetryAndFollowUpInterceptor.intercept;
+    if(isCanceled || throw)then(yes)
+        :Exception;
+    else(no)
+       :BridgeInterceptor;
+       :CacheInterceptor;
+       split
+        :networkRequest=null&&force-cache;
+        :Exception;
+       split again
+        :networkRequest=null&&cache!=null;
+        :CacheResponse;
+       split again
+       :ConnectInterceptor;
+       if(isCanceled || throw)then(yes)
+       :Exception;
+       else(no)
+            :OkHttpClient.networkInterceptors;
+            :CallServerInterceptor;
+       endif
+       end split
+    endif
+}
+partition Response {
+    :Response;
+    stop
+}
+
+@enduml
+
+RetryAndFollowUpInterceptor：失败/重定向/Auth重试/Proxy/TimeOut等重试
+BridgeInterceptor:包装请求头gzip/Connection/Host等响应头;Cookie的设置
+CacheInterceptor:服务来自缓存的请求，并将响应写入缓存。
+ConnectInterceptor:打开到目标服务器的连接,创建或复用socket流(ConnectPool)
+CallServerInterceptor:对服务器进行网络调用

@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Cloneable
+interface Call.Factory
+interface WebSocket.Factory
+
+Dispatcher 	o-- OkHttpClient
+
+class Dispatcher{
+
+}
+
++class OkHttpClient implements Cloneable,Call.Factory,WebSocket.Factory {
+ .. constructor ..
+  + OkHttpClient()
+  + OkHttpClient(Builder)
+ .. field ..
+  ~ dispatcher
+  ~ proxy
+  ~ protocols
+  ~ connectionSpecs
+  ~ interceptors
+  ~ networkInterceptors
+  ~ eventListenerFactory
+  ~ proxySelector
+  ~ cookieJar
+  ~ cache
+  ~ internalCache
+  ~ socketFactory
+  ~ sslSocketFactory
+  ~ certificateChainCleaner
+  ~ hostnameVerifier
+  ~ certificatePinner
+  ~ proxyAuthenticator
+  ~ authenticator
+  ~ connectionPool
+  ~ dns
+  ~ followSslRedirects
+  ~ followRedirects
+  ~ retryOnConnectionFailure
+  ~ callTimeout
+  ~ connectTimeout
+  ~ readTimeout
+  ~ writeTimeout
+  ~ pingInterval
+ .. method ..
+  + newSslSocketFactory(X509TrustManager)
+  ~ dispatcher
+}
+
+
+
+@enduml
